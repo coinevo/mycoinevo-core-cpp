@@ -1,9 +1,9 @@
 //
-//  monero_key_image_utils.cpp
-//  MyMonero
+//  coinevo_key_image_utils.cpp
+//  MyCoinevo
 //
 //  Created by Paul Shapiro on 1/2/18.
-//  Copyright (c) 2014-2019, MyMonero.com
+//  Copyright (c) 2014-2019, MyCoinevo.com
 //
 //  All rights reserved.
 //
@@ -32,12 +32,12 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //
-#include "monero_key_image_utils.hpp"
+#include "coinevo_key_image_utils.hpp"
 //
 using namespace crypto;
 using namespace cryptonote;
 //
-bool monero_key_image_utils::new__key_image(
+bool coinevo_key_image_utils::new__key_image(
 	const crypto::public_key& account_pub_spend_key,
 	const crypto::secret_key& account_sec_spend_key,
 	const crypto::secret_key& account_sec_view_key,
@@ -49,7 +49,7 @@ bool monero_key_image_utils::new__key_image(
 	//
 	bool r = false;
 	//
-	// "Subaddresses aren't supported in mymonero/openmonero yet. Roll out the original scheme:
+	// "Subaddresses aren't supported in mycoinevo/opencoinevo yet. Roll out the original scheme:
 	//   compute D = a*R
 	//   compute P = Hs(D || i)*G + B
 	//   compute x = Hs(D || i) + b      (and check if P==x*G)
@@ -117,9 +117,9 @@ bool monero_key_image_utils::new__key_image(
 //		r = string_tools::hex_to_pod(std::string(tx_pub_key_NSString.UTF8String), tx_pub_key);
 //		NSAssert(r, @"Invalid tx pub key");
 //	}
-//	monero_key_image_utils::KeyImageRetVals retVals;
+//	coinevo_key_image_utils::KeyImageRetVals retVals;
 //	{
-//		bool r = monero_key_image_utils::new__key_image(pub_spendKey, sec_spendKey, sec_viewKey, tx_pub_key, out_index, retVals);
+//		bool r = coinevo_key_image_utils::new__key_image(pub_spendKey, sec_spendKey, sec_viewKey, tx_pub_key, out_index, retVals);
 //		if (!r) {
 //			return nil; // TODO: return error string? (unwrap optional)
 //		}

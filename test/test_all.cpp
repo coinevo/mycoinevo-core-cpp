@@ -1,8 +1,8 @@
 //
 //  test_all.cpp
-//  MyMonero
+//  MyCoinevo
 //
-//  Copyright (c) 2014-2019, MyMonero.com
+//  Copyright (c) 2014-2019, MyCoinevo.com
 //
 //  All rights reserved.
 //
@@ -33,7 +33,7 @@
 //
 // Test module setup
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE LibMoneroTests
+#define BOOST_TEST_MODULE LibCoinevoTests
 #include <boost/test/unit_test.hpp> // last
 //
 // Includes & namespaces
@@ -47,7 +47,7 @@ using namespace boost;
 #include "cryptonote_format_utils.h"
 #include <boost/property_tree/json_parser.hpp>
 //
-#include "monero_fork_rules.hpp"
+#include "coinevo_fork_rules.hpp"
 //
 #include "serial_bridge_utils.hpp"
 using namespace serial_bridge_utils;
@@ -55,11 +55,11 @@ using namespace serial_bridge_utils;
 // Shared code
 //
 // Test suites
- #include "../src/monero_address_utils.hpp"
+ #include "../src/coinevo_address_utils.hpp"
 BOOST_AUTO_TEST_CASE(decodeAddress)
 {
 	string address = "43zxvpcj5Xv9SEkNXbMCG7LPQStHMpFCQCmkmR4u5nzjWwq5Xkv5VmGgYEsHXg4ja2FGRD5wMWbBVMijDTqmmVqm93wHGkg";
-	auto result = monero::address_utils::decodedAddress(address, cryptonote::MAINNET);
+	auto result = coinevo::address_utils::decodedAddress(address, cryptonote::MAINNET);
 	if (result.err_string) {
 		std::cout << *result.err_string << endl;
 		BOOST_REQUIRE(!result.err_string);
@@ -72,15 +72,15 @@ BOOST_AUTO_TEST_CASE(decodeAddress)
 }
 //
 //
-#include "../src/monero_paymentID_utils.hpp"
+#include "../src/coinevo_paymentID_utils.hpp"
 BOOST_AUTO_TEST_CASE(paymentID)
 {
-	string paymentID_string = monero_paymentID_utils::new_short_plain_paymentID_string();
+	string paymentID_string = coinevo_paymentID_utils::new_short_plain_paymentID_string();
 	std::cout << "paymentID: paymentID_string: " << paymentID_string << std::endl;
 	BOOST_REQUIRE_MESSAGE(paymentID_string.size() == 16, "Expected payment ID to be of length 16");
 	//
 	crypto::hash parsed__payment_id;
-	bool didParse = monero_paymentID_utils::parse_payment_id(paymentID_string, parsed__payment_id);
+	bool didParse = coinevo_paymentID_utils::parse_payment_id(paymentID_string, parsed__payment_id);
 	BOOST_REQUIRE_MESSAGE(didParse, "Couldn't parse payment ID");
 	std::string parsed__payment_id_as_string = epee::string_tools::pod_to_hex(parsed__payment_id);
 	BOOST_REQUIRE_MESSAGE(paymentID_string.compare(parsed__payment_id_as_string), "Expected parsed payment ID to equal original payment ID");
@@ -88,27 +88,27 @@ BOOST_AUTO_TEST_CASE(paymentID)
 }
 //
 //
-#include "../src/monero_key_image_utils.hpp"
+#include "../src/coinevo_key_image_utils.hpp"
 BOOST_AUTO_TEST_CASE(keyImage)
 {
 }
 //
 //
-#include "../src/monero_wallet_utils.hpp"
+#include "../src/coinevo_wallet_utils.hpp"
 BOOST_AUTO_TEST_CASE(wallet)
 {
 }
 //
 //
-#include "../src/monero_transfer_utils.hpp"
-#include "../src/monero_fork_rules.hpp"
+#include "../src/coinevo_transfer_utils.hpp"
+#include "../src/coinevo_fork_rules.hpp"
 BOOST_AUTO_TEST_CASE(transfers__fee)
 {
 	uint8_t fork_version = 10;
-	auto use_fork_rules_fn = monero_fork_rules::make_use_fork_rules_fn(fork_version);
+	auto use_fork_rules_fn = coinevo_fork_rules::make_use_fork_rules_fn(fork_version);
 	uint64_t fee_per_b = 24658;
 	uint32_t priority = 2;
-	uint64_t est_fee = monero_fee_utils::estimated_tx_network_fee(fee_per_b, priority, use_fork_rules_fn);
+	uint64_t est_fee = coinevo_fee_utils::estimated_tx_network_fee(fee_per_b, priority, use_fork_rules_fn);
 	std::cout << "transfers__fee: est_fee with fee_per_b " << fee_per_b << ": " << est_fee << std::endl;
 	BOOST_REQUIRE(est_fee > 0);
 }
@@ -135,7 +135,7 @@ string DG_presweep__rand_outs_json = "{\"mix_outs\":[{\"amount\":\"0\",\"outputs
 BOOST_AUTO_TEST_CASE(bridge__transfers__send__sweepDust)
 {
 	using namespace serial_bridge;
-	using namespace monero_transfer_utils;
+	using namespace coinevo_transfer_utils;
 	//
 	// this being input as JSON merely for convenience
 	boost::property_tree::ptree pt;
@@ -190,8 +190,8 @@ BOOST_AUTO_TEST_CASE(bridge__transfers__send__sweepDust)
 			boost::property_tree::ptree ret_tree;
 			boost::property_tree::read_json(ret_stream, ret_tree);
 			optional<uint32_t> err_code = ret_tree.get_optional<uint32_t>(ret_json_key__any__err_code());
-			if (err_code != none && (CreateTransactionErrorCode)*err_code != monero_transfer_utils::noError) {
-				if ((CreateTransactionErrorCode)*err_code == monero_transfer_utils::needMoreMoneyThanFound) {
+			if (err_code != none && (CreateTransactionErrorCode)*err_code != coinevo_transfer_utils::noError) {
+				if ((CreateTransactionErrorCode)*err_code == coinevo_transfer_utils::needMoreMoneyThanFound) {
 					optional<string> spendable_balance_string = ret_tree.get_optional<string>(ret_json_key__send__spendable_balance());
 					BOOST_REQUIRE(spendable_balance_string != none);
 					BOOST_REQUIRE((*spendable_balance_string).size() > 0);
@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE(bridge__transfers__send__sweepDust)
 			ret_stream << ret_string;
 			boost::property_tree::read_json(ret_stream, ret_tree);
 			optional<uint32_t> err_code = ret_tree.get_optional<uint32_t>(ret_json_key__any__err_code());
-			if (err_code != none && (CreateTransactionErrorCode)*err_code != monero_transfer_utils::noError) {
+			if (err_code != none && (CreateTransactionErrorCode)*err_code != coinevo_transfer_utils::noError) {
 				auto err_msg = err_msg_from_err_code__create_transaction((CreateTransactionErrorCode)*err_code);
 				BOOST_REQUIRE_MESSAGE(false, err_msg);
 			}
@@ -307,7 +307,7 @@ BOOST_AUTO_TEST_CASE(bridge__transfers__send__sweepDust)
 BOOST_AUTO_TEST_CASE(bridge__transfers__send__amountWOnlyDusty)
 {
 	using namespace serial_bridge;
-	using namespace monero_transfer_utils;
+	using namespace coinevo_transfer_utils;
 	//
 	// this being input as JSON merely for convenience
 	boost::property_tree::ptree pt;
@@ -347,7 +347,7 @@ string DG_postsweep__rand_outs_json = "{\"mix_outs\":[{\"amount\":\"0\",\"output
 BOOST_AUTO_TEST_CASE(bridge__transfers__send__amount)
 {
 	using namespace serial_bridge;
-	using namespace monero_transfer_utils;
+	using namespace coinevo_transfer_utils;
 	//
 	// this being input as JSON merely for convenience
 	boost::property_tree::ptree pt;
@@ -401,8 +401,8 @@ BOOST_AUTO_TEST_CASE(bridge__transfers__send__amount)
 			boost::property_tree::ptree ret_tree;
 			boost::property_tree::read_json(ret_stream, ret_tree);
 			optional<uint32_t> err_code = ret_tree.get_optional<uint32_t>(ret_json_key__any__err_code());
-			if (err_code != none && (CreateTransactionErrorCode)*err_code != monero_transfer_utils::noError) {
-				if ((CreateTransactionErrorCode)*err_code == monero_transfer_utils::needMoreMoneyThanFound) {
+			if (err_code != none && (CreateTransactionErrorCode)*err_code != coinevo_transfer_utils::noError) {
+				if ((CreateTransactionErrorCode)*err_code == coinevo_transfer_utils::needMoreMoneyThanFound) {
 					optional<string> spendable_balance_string = ret_tree.get_optional<string>(ret_json_key__send__spendable_balance());
 					BOOST_REQUIRE(spendable_balance_string != none);
 					BOOST_REQUIRE((*spendable_balance_string).size() > 0);
@@ -484,7 +484,7 @@ BOOST_AUTO_TEST_CASE(bridge__transfers__send__amount)
 			ret_stream << ret_string;
 			boost::property_tree::read_json(ret_stream, ret_tree);
 			optional<uint32_t> err_code = ret_tree.get_optional<uint32_t>(ret_json_key__any__err_code());
-			if (err_code != none && (CreateTransactionErrorCode)*err_code != monero_transfer_utils::noError) {
+			if (err_code != none && (CreateTransactionErrorCode)*err_code != coinevo_transfer_utils::noError) {
 				auto err_msg = err_msg_from_err_code__create_transaction((CreateTransactionErrorCode)*err_code);
 				BOOST_REQUIRE_MESSAGE(false, err_msg);
 			}
@@ -1435,7 +1435,7 @@ string OM_stagenet__rand_outs_json = "{\"mix_outs\":[{\"amount\":\"0\",\"outputs
 BOOST_AUTO_TEST_CASE(bridge__transfers__send_stagenet_coinbase)
 {
 	using namespace serial_bridge;
-	using namespace monero_transfer_utils;
+	using namespace coinevo_transfer_utils;
 	//
 	// this being input as JSON merely for convenience
 	boost::property_tree::ptree pt;
@@ -1489,8 +1489,8 @@ BOOST_AUTO_TEST_CASE(bridge__transfers__send_stagenet_coinbase)
 			boost::property_tree::ptree ret_tree;
 			boost::property_tree::read_json(ret_stream, ret_tree);
 			optional<uint32_t> err_code = ret_tree.get_optional<uint32_t>(ret_json_key__any__err_code());
-			if (err_code != none && (CreateTransactionErrorCode)*err_code != monero_transfer_utils::noError) {
-				if ((CreateTransactionErrorCode)*err_code == monero_transfer_utils::needMoreMoneyThanFound) {
+			if (err_code != none && (CreateTransactionErrorCode)*err_code != coinevo_transfer_utils::noError) {
+				if ((CreateTransactionErrorCode)*err_code == coinevo_transfer_utils::needMoreMoneyThanFound) {
 					optional<string> spendable_balance_string = ret_tree.get_optional<string>(ret_json_key__send__spendable_balance());
 					BOOST_REQUIRE(spendable_balance_string != none);
 					BOOST_REQUIRE((*spendable_balance_string).size() > 0);
@@ -1571,7 +1571,7 @@ BOOST_AUTO_TEST_CASE(bridge__transfers__send_stagenet_coinbase)
 			ret_stream << ret_string;
 			boost::property_tree::read_json(ret_stream, ret_tree);
 			optional<uint32_t> err_code = ret_tree.get_optional<uint32_t>(ret_json_key__any__err_code());
-			if (err_code != none && (CreateTransactionErrorCode)*err_code != monero_transfer_utils::noError) {
+			if (err_code != none && (CreateTransactionErrorCode)*err_code != coinevo_transfer_utils::noError) {
 				auto err_msg = err_msg_from_err_code__create_transaction((CreateTransactionErrorCode)*err_code);
 				BOOST_REQUIRE_MESSAGE(false, err_msg);
 			}
@@ -1608,7 +1608,7 @@ BOOST_AUTO_TEST_CASE(bridge__transfers__send_stagenet_coinbase)
 //BOOST_AUTO_TEST_CASE(emscr_bridge__send_funds__sweep)
 //{
 //	using namespace emscr_async_bridge;
-//	using namespace monero_transfer_utils;
+//	using namespace coinevo_transfer_utils;
 //	//
 //	boost::property_tree::ptree root;
 //	root.put("task_id", "some guid");
@@ -1633,11 +1633,11 @@ string _send_routine__sweep_getRandomOuts_dummyReplyJSONStr = "{\"amount_outs\":
 //
 string _send_routine__sweep_submitRawTx_dummyReplyJSONStr = "{}";
 //
-#include "../src/monero_send_routine.hpp"
+#include "../src/coinevo_send_routine.hpp"
 BOOST_AUTO_TEST_CASE(send_routine__sweep)
 {
-	using namespace monero_send_routine;
-	using namespace monero_transfer_utils;
+	using namespace coinevo_send_routine;
+	using namespace coinevo_transfer_utils;
 	//
 	string payment_id_string = "d2f602b240fbe624";
 	Async_SendFunds_Args args = {
@@ -1703,7 +1703,7 @@ BOOST_AUTO_TEST_CASE(send_routine__sweep)
 			BOOST_REQUIRE(success_retVals.used_fee > 0);
 			BOOST_REQUIRE(success_retVals.total_sent > 0);
 
-			BOOST_REQUIRE(success_retVals.mixin == monero_fork_rules::fixed_mixinsize());
+			BOOST_REQUIRE(success_retVals.mixin == coinevo_fork_rules::fixed_mixinsize());
 
 			BOOST_REQUIRE(success_retVals.signed_serialized_tx_string.size() > 0);
 			cout << "send_routine__sweep: serialized_signed_tx: " << success_retVals.signed_serialized_tx_string << endl;

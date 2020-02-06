@@ -1,6 +1,6 @@
 //
-//  monero_wallet_utils.hpp
-//  Copyright (c) 2014-2019, MyMonero.com
+//  coinevo_wallet_utils.hpp
+//  Copyright (c) 2014-2019, MyCoinevo.com
 //
 //  All rights reserved.
 //
@@ -30,8 +30,8 @@
 //
 //
 
-#ifndef monero_wallet_utils_hpp
-#define monero_wallet_utils_hpp
+#ifndef coinevo_wallet_utils_hpp
+#define coinevo_wallet_utils_hpp
 
 #include <boost/optional.hpp>
 #include "serialization/binary_archive.h"
@@ -52,7 +52,7 @@ using namespace epee;
 using namespace tools; // intentionally first
 #include "tools__ret_vals.hpp"
 //
-namespace monero_wallet_utils
+namespace coinevo_wallet_utils
 {
 	using namespace std;
 	using namespace boost;
@@ -67,7 +67,7 @@ namespace monero_wallet_utils
 	};
 	using legacy16B_secret_key = tools::scrubbed<ec_nonscalar_16Byte>;
 	void coerce_valid_sec_key_from(
-		const legacy16B_secret_key &legacy16B_mymonero_sec_seed,
+		const legacy16B_secret_key &legacy16B_mycoinevo_sec_seed,
 		secret_key &dst__sec_seed
 	);
 	static_assert(sizeof(legacy16B_secret_key) == 16, "Invalid structure size");
@@ -217,7 +217,7 @@ namespace monero_wallet_utils
 
 
 #define MWU__MAKE_COMPARABLE(type) \
-namespace monero_wallet_utils { \
+namespace coinevo_wallet_utils { \
 inline bool operator==(const type &_v1, const type &_v2) { \
 return !memcmp(&_v1, &_v2, sizeof(_v1)); \
 } \
@@ -227,7 +227,7 @@ return !operator==(_v1, _v2); \
 }
 
 #define MWU__MAKE_COMPARABLE_CONSTANT_TIME(type) \
-namespace monero_wallet_utils { \
+namespace coinevo_wallet_utils { \
 inline bool operator==(const type &_v1, const type &_v2) { \
 static_assert(sizeof(_v1) == 32, "constant time comparison is only implenmted for 32 bytes"); \
 return crypto_verify_32((const unsigned char*)&_v1, (const unsigned char*)&_v2) == 0; \
@@ -238,7 +238,7 @@ return !operator==(_v1, _v2); \
 }
 
 #define MWU__DEFINE_HASH_FUNCTIONS(type) \
-namespace monero_wallet_utils { \
+namespace coinevo_wallet_utils { \
 static_assert(sizeof(std::size_t) <= sizeof(type), "Size of " #type " must be at least that of size_t"); \
 inline std::size_t hash_value(const type &_v) { \
 return reinterpret_cast<const std::size_t &>(_v); \
@@ -246,8 +246,8 @@ return reinterpret_cast<const std::size_t &>(_v); \
 } \
 namespace std { \
 template<> \
-struct hash<monero_wallet_utils::type> { \
-std::size_t operator()(const monero_wallet_utils::type &_v) const { \
+struct hash<coinevo_wallet_utils::type> { \
+std::size_t operator()(const coinevo_wallet_utils::type &_v) const { \
 return reinterpret_cast<const std::size_t &>(_v); \
 } \
 }; \
@@ -264,4 +264,4 @@ MWU__DEFINE_HASH_FUNCTIONS(type)
 
 MWU__MAKE_HASHABLE(legacy16B_secret_key) // "constant time comparison is only implenmted for 32 bytes"
 
-#endif /* monero_wallet_utils_hpp */
+#endif /* coinevo_wallet_utils_hpp */

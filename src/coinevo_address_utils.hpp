@@ -1,9 +1,6 @@
 //
-//  monero_fork_rules.hpp
-//  MyMonero
-//
-//  Created by Paul Shapiro on 1/9/18.
-//  Copyright (c) 2014-2019, MyMonero.com
+//  coinevo_address_utils.hpp
+//  Copyright (c) 2014-2019, MyCoinevo.com
 //
 //  All rights reserved.
 //
@@ -32,35 +29,34 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //
+#include <string>
+#include <boost/optional.hpp>
+//
+#include "cryptonote_config.h"
+#include "cryptonote_basic/account.h"
 
-#ifndef monero_fork_rules_hpp
-#define monero_fork_rules_hpp
-
-#include <functional>
-#include <stdint.h>
-
-namespace monero_fork_rules
+#include "tools__ret_vals.hpp"
+//
+namespace coinevo
 {
-	typedef std::function<bool(uint8_t/*version*/, int64_t/*early_blocks*/)> use_fork_rules_fn_type;
-	//
-	bool lightwallet_hardcoded__use_fork_rules(uint8_t version, int64_t early_blocks); // convenience - to be called by a use_fork_rules_fn_type implementation
-	//
-	// The fork_version should be the actual current network fork version.
-	// If zero, it is ignored and the resulting functor always returns true.
-	inline use_fork_rules_fn_type make_use_fork_rules_fn(uint8_t fork_version)
+	namespace address_utils
 	{
-		return 0 != fork_version ?
-			[fork_version](uint8_t desired_version, int64_t/*early_blocks is ignored*/)
-			{
-				return desired_version <= fork_version;
-			}
-			: use_fork_rules_fn_type(lightwallet_hardcoded__use_fork_rules);
+		using namespace std;
+		using namespace boost;
+		using namespace cryptonote;
+		
+		struct DecodedAddress_RetVals: tools::RetVals_base
+		{
+			optional<string> pub_viewKey_string;
+			optional<string> pub_spendKey_string;
+			bool isSubaddress;
+			optional<string> paymentID_string;
+		};
+		//
+		DecodedAddress_RetVals decodedAddress(const string &addressString, network_type nettype);
+		bool isSubAddress(const string &addressString, network_type nettype);
+		bool isIntegratedAddress(const string &addressString, network_type nettype);
+		//
+		optional<string> new_integratedAddrFromStdAddr(const string &std_address_string, const string &short_paymentID, cryptonote::network_type nettype);
 	}
-	//
-	uint32_t fixed_ringsize(); // not mixinsize, which would be ringsize-1
-	uint32_t fixed_mixinsize(); // not ringsize, which would be mixinsize+1
-	//
-	uint64_t dust_threshold();
 }
-
-#endif /* monero_fork_rules */

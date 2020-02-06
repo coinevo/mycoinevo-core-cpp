@@ -1,6 +1,6 @@
 //
-//  monero_address_utils.cpp
-//  Copyright (c) 2014-2019, MyMonero.com
+//  coinevo_address_utils.cpp
+//  Copyright (c) 2014-2019, MyCoinevo.com
 //
 //  All rights reserved.
 //
@@ -29,8 +29,8 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //
-#import "monero_address_utils.hpp"
-using namespace monero;
+#import "coinevo_address_utils.hpp"
+using namespace coinevo;
 using namespace address_utils;
 //
 #include "cryptonote_basic/cryptonote_basic_impl.h"
@@ -43,7 +43,7 @@ using namespace epee;
 //
 #include "wallet_errors.h"
 //
-#include "monero_paymentID_utils.hpp"
+#include "coinevo_paymentID_utils.hpp"
 //
 // Accessors - Implementations
 DecodedAddress_RetVals address_utils::decodedAddress(const string &addressString, cryptonote::network_type nettype)
@@ -96,7 +96,7 @@ bool address_utils::isIntegratedAddress(const string &addressString, cryptonote:
 optional<string> address_utils::new_integratedAddrFromStdAddr(const string &std_address_string, const string &short_paymentID_string, cryptonote::network_type nettype)
 {
 	crypto::hash8 payment_id_short;
-	bool didParse = monero_paymentID_utils::parse_short_payment_id(short_paymentID_string, payment_id_short);
+	bool didParse = coinevo_paymentID_utils::parse_short_payment_id(short_paymentID_string, payment_id_short);
 	if (!didParse) {
 		return none;
 	}

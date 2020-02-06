@@ -1,6 +1,6 @@
 //
-//  monero_transfer_utils.hpp
-//  Copyright (c) 2014-2019, MyMonero.com
+//  coinevo_transfer_utils.hpp
+//  Copyright (c) 2014-2019, MyCoinevo.com
 //
 //  All rights reserved.
 //
@@ -29,8 +29,8 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //
-#ifndef monero_transfer_utils_hpp
-#define monero_transfer_utils_hpp
+#ifndef coinevo_transfer_utils_hpp
+#define coinevo_transfer_utils_hpp
 //
 #include <boost/optional.hpp>
 //
@@ -42,18 +42,18 @@
 #include "cryptonote_tx_utils.h"
 #include "ringct/rctSigs.h"
 //
-#include "monero_fork_rules.hpp"
-#include "monero_fee_utils.hpp"
+#include "coinevo_fork_rules.hpp"
+#include "coinevo_fee_utils.hpp"
 //
 using namespace tools;
 #include "tools__ret_vals.hpp"
 //
-namespace monero_transfer_utils
+namespace coinevo_transfer_utils
 {
 	using namespace std;
 	using namespace boost;
 	using namespace cryptonote;
-	using namespace monero_fork_rules;
+	using namespace coinevo_fork_rules;
 	using namespace crypto;
 	//
 	bool is_transfer_unlocked(uint64_t unlock_time, uint64_t block_height, uint64_t blockchain_size, network_type nettype = MAINNET);
@@ -161,7 +161,7 @@ namespace monero_transfer_utils
 		}
 	}
 	//
-	// See monero_send_routine for actual app-lvl interface used by lightwallets 
+	// See coinevo_send_routine for actual app-lvl interface used by lightwallets 
 	//
 	//
 	// Send_Step* functions procedure for integrators:
@@ -294,4 +294,4 @@ namespace monero_transfer_utils
 	);
 }
 
-#endif /* monero_transfer_utils_hpp */
+#endif /* coinevo_transfer_utils_hpp */

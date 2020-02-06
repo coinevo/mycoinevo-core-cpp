@@ -1,9 +1,9 @@
 //
-//  monero_fork_rules.cpp
-//  MyMonero
+//  coinevo_fork_rules.hpp
+//  MyCoinevo
 //
 //  Created by Paul Shapiro on 1/9/18.
-//  Copyright (c) 2014-2019, MyMonero.com
+//  Copyright (c) 2014-2019, MyCoinevo.com
 //
 //  All rights reserved.
 //
@@ -32,40 +32,35 @@
 //  THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //
-//
-#include "monero_fork_rules.hpp"
-//
-using namespace monero_fork_rules;
-//
-bool monero_fork_rules::lightwallet_hardcoded__use_fork_rules(uint8_t version, int64_t early_blocks)
+
+#ifndef coinevo_fork_rules_hpp
+#define coinevo_fork_rules_hpp
+
+#include <functional>
+#include <stdint.h>
+
+namespace coinevo_fork_rules
 {
-	return true; // TODO - we don't have the actual fork rules from thje lightwallet server yet
+	typedef std::function<bool(uint8_t/*version*/, int64_t/*early_blocks*/)> use_fork_rules_fn_type;
 	//
-	// full wallets do:
-//	uint64_t height, earliest_height;
-//	boost::optional<std::string> result = m_node_rpc_proxy.get_height(height);
-//	throw_on_rpc_response_error(result, "get_info");
-//	result = m_node_rpc_proxy.get_earliest_height(version, earliest_height);
-//	throw_on_rpc_response_error(result, "get_hard_fork_info");
-//
-//	bool close_enough = height >=  earliest_height - early_blocks; // start using the rules that many blocks beforehand
-//	if (close_enough)
-//		LOG_PRINT_L2("Using v" << (unsigned)version << " rules");
-//	else
-//		LOG_PRINT_L2("Not using v" << (unsigned)version << " rules");
-//	return close_enough;	
+	bool lightwallet_hardcoded__use_fork_rules(uint8_t version, int64_t early_blocks); // convenience - to be called by a use_fork_rules_fn_type implementation
+	//
+	// The fork_version should be the actual current network fork version.
+	// If zero, it is ignored and the resulting functor always returns true.
+	inline use_fork_rules_fn_type make_use_fork_rules_fn(uint8_t fork_version)
+	{
+		return 0 != fork_version ?
+			[fork_version](uint8_t desired_version, int64_t/*early_blocks is ignored*/)
+			{
+				return desired_version <= fork_version;
+			}
+			: use_fork_rules_fn_type(lightwallet_hardcoded__use_fork_rules);
+	}
+	//
+	uint32_t fixed_ringsize(); // not mixinsize, which would be ringsize-1
+	uint32_t fixed_mixinsize(); // not ringsize, which would be mixinsize+1
+	//
+	uint64_t dust_threshold();
 }
-//
-// Protocol / Defaults
-uint32_t monero_fork_rules::fixed_ringsize()
-{
-	return 11; // v8
-}
-uint32_t monero_fork_rules::fixed_mixinsize()
-{
-	return fixed_ringsize() - 1;
-}
-uint64_t monero_fork_rules::dust_threshold()
-{
-	return 2000000000;
-}
+
+#endif /* coinevo_fork_rules */

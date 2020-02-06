@@ -1,4 +1,4 @@
-# MyMonero Core C++
+# MyCoinevo Core C++
 
 1. What's in this Repo?
 1. Setup
@@ -12,19 +12,19 @@
 
 ## What's in This Repo?
 
-This repository holds the C++ source code for the Monero/CryptoNote cryptography and protocols, plus lightwallet functions which power the official [MyMonero](https://www.mymonero.com) apps.
+This repository holds the C++ source code for the Coinevo/CryptoNote cryptography and protocols, plus lightwallet functions which power the official [MyCoinevo](https://coinevo.tech) apps.
 
-A primary goal for this repository is its future convergence and reimplementation with an essential Monero core library.
+A primary goal for this repository is its future convergence and reimplementation with an essential Coinevo core library.
 
 
 ### Contents 
 
-* `contrib/monero-core-custom` is a Git submodule which contains a curated subset of the official Monero C/C++ source code, eventually to be replaced by new official Monero core repo
+* `contrib/coinevo-core-custom` is a Git submodule which contains a curated subset of the official Coinevo C/C++ source code, eventually to be replaced by new official Coinevo core repo
 
 * `src` contains all the custom code written for this repo. 
-	* `serial_bridge_index` contains a central JSON interface to a set of central mymonero-core functions, documented below.
+	* `serial_bridge_index` contains a central JSON interface to a set of central mycoinevo-core functions, documented below.
 	
-* This readme is located at `README.md`, and the license is located at `LICENSE.txt`. All source code copyright © 2014-2018 by MyMonero. All rights reserved.
+* This readme is located at `README.md`, and the license is located at `LICENSE.txt`. All source code copyright © 2014-2018 by MyCoinevo. All rights reserved.
 
 
 ### Dependencies
@@ -39,7 +39,7 @@ A primary goal for this repository is its future convergence and reimplementatio
 
 	* If running tests: `unit_test_framework`
 
-* `monero-core-custom` (see "Setup")
+* `coinevo-core-custom` (see "Setup")
 
 
 ## Setup
@@ -50,7 +50,7 @@ A primary goal for this repository is its future convergence and reimplementatio
 
 Simply embed the relevant code in your application, generally via CMake. See `CMakeLists.txt` for required files.
 
-One example usage of this code is its transpilation into wasm and JS by mymonero-core-js.
+One example usage of this code is its transpilation into wasm and JS by mycoinevo-core-js.
 
 ## Testing
 
@@ -62,7 +62,7 @@ Suggestions and feedback are very welcome!
 
 ## Pull Requests
 
-We'll merge nearly anything constructive and relevant. There are lots of items slated for development or happening concurrently, so get in touch and we'll let you know if anyone's working on it. We often collaborate over IRC in #mymonero on Freenode.
+We'll merge nearly anything constructive and relevant. There are lots of items slated for development or happening concurrently, so get in touch and we'll let you know if anyone's working on it. We often collaborate over IRC in #mycoinevo on Freenode.
 
 Contributors credited in releases.
 
@@ -80,11 +80,11 @@ Contributors credited in releases.
 
 * 🍄 `luigi1111`
 
-* 🤵 `vtnerd` C++ & Monero advisory
+* 🤵 `vtnerd` C++ & Coinevo advisory
 
-* 🐮 `moneromooo-monero` Major Monero contributor; Advisory
+* 🐮 `coinevomooo-coinevo` Major Coinevo contributor; Advisory
 
-* 🦁 `ndorf` C++ & Monero expertise, architecture, code contributions
+* 🦁 `ndorf` C++ & Coinevo expertise, architecture, code contributions
 
 * 🏍 `gutenye` Code contributions
 
@@ -95,26 +95,26 @@ If you want to embed the C++ or build the source in your own project, please tak
 
 * `slow-hash.c` must be compiled with `-maes`
 
-* The Monero source, a slightly modified version of which is a dep of this project, can only be built on versions of iOS >= 9 due to required support for `thread_local` as used by `threadpool.cpp`.
+* The Coinevo source, a slightly modified version of which is a dep of this project, can only be built on versions of iOS >= 9 due to required support for `thread_local` as used by `threadpool.cpp`.
 
-* Not all Monero `.cpp` files which are in `monero-core-custom` must be included for `mymonero-core-cpp` - such as when their symbols are not required by any code called by this project. See `CMakeLists.txt` for a list of files required for compilation.
+* Not all Coinevo `.cpp` files which are in `coinevo-core-custom` must be included for `mycoinevo-core-cpp` - such as when their symbols are not required by any code called by this project. See `CMakeLists.txt` for a list of files required for compilation.
 
-* If you only want to call the C++ directly without using `serial_bridge_index` (described below), then that file-pair does not need to be included in your build. (See mymonero-app-ios link)
+* If you only want to call the C++ directly without using `serial_bridge_index` (described below), then that file-pair does not need to be included in your build. (See mycoinevo-app-ios link)
 
 
 ## API 
 
 #### Notes:
 
-* If you are implementing the below-described Send routine yourself (examples: [JS](https://github.com/mymonero/mymonero-core-js/blob/master/monero_utils/monero_sendingFunds_utils.js#L100), [Swift](https://github.com/mymonero/mymonero-app-ios/blob/6deb815257e654ee9639a2b7a08a103b29a910f7/Modules/HostedMonero/HostedMonero_SendingFunds.swift#L179)), you should:
-	* implement the [necessary re-entry logic](https://github.com/mymonero/mymonero-app-ios/blob/6deb815257e654ee9639a2b7a08a103b29a910f7/Modules/HostedMonero/HostedMonero_SendingFunds.swift#L265) if step2 indicates reconstruction required, and
-	* *(optional)* [construct the `err_msg`](https://github.com/mymonero/mymonero-app-ios/blob/6deb815257e654ee9639a2b7a08a103b29a910f7/Modules/MyMoneroCore/Swift/MyMoneroCore_ObjCpp.mm#L563) if the error code indicates not enough spendable balance.
+* If you are implementing the below-described Send routine yourself (examples: [JS](https://github.com/mycoinevo/mycoinevo-core-js/blob/master/coinevo_utils/coinevo_sendingFunds_utils.js#L100), [Swift](https://github.com/mycoinevo/mycoinevo-app-ios/blob/6deb815257e654ee9639a2b7a08a103b29a910f7/Modules/HostedCoinevo/HostedCoinevo_SendingFunds.swift#L179)), you should:
+	* implement the [necessary re-entry logic](https://github.com/mycoinevo/mycoinevo-app-ios/blob/6deb815257e654ee9639a2b7a08a103b29a910f7/Modules/HostedCoinevo/HostedCoinevo_SendingFunds.swift#L265) if step2 indicates reconstruction required, and
+	* *(optional)* [construct the `err_msg`](https://github.com/mycoinevo/mycoinevo-app-ios/blob/6deb815257e654ee9639a2b7a08a103b29a910f7/Modules/MyCoinevoCore/Swift/MyCoinevoCore_ObjCpp.mm#L563) if the error code indicates not enough spendable balance.
 
 ### C++
 
 *Coming soon*
 
-For examples see `src/serial_bridge_index.cpp` and [mymonero-app-ios/MyMoneroCore_ObjCpp.mm](https://github.com/mymonero/mymonero-app-ios/blob/master/Modules/MyMoneroCore/Swift/MyMoneroCore_ObjCpp.mm).
+For examples see `src/serial_bridge_index.cpp` and [mycoinevo-app-ios/MyCoinevoCore_ObjCpp.mm](https://github.com/mycoinevo/mycoinevo-app-ios/blob/master/Modules/MyCoinevoCore/Swift/MyCoinevoCore_ObjCpp.mm).
 
 
 ### JSON
@@ -193,7 +193,7 @@ When they fail, some of these functions return only a key-value `err_msg`.
 
 **`address_and_keys_from_seed`**
 
-* AKA `create_address` in legacy mymonero-core-js
+* AKA `create_address` in legacy mycoinevo-core-js
 
 * Args: `nettype_string: NettypeString`, `seed_string: String`
 
@@ -296,8 +296,8 @@ As mentioned, implementing the Send procedure without making use of one of our e
 The values which must be passed between functions have (almost entirely) consistent names, simplifying integration. The only current exception is the name of the explicit `fee_actually_needed` which should be passed to step1 as the optional `passedIn_attemptAt_fee` after being received by calling step2 (see below).
 
 ##### Examples
-* [JS implementation of SendFunds](https://github.com/mymonero/mymonero-core-js/blob/master/monero_utils/monero_sendingFunds_utils.js#L100)
-* [JS implementation of JSON bridge calls](https://github.com/mymonero/mymonero-core-js/blob/789c1fa71b00fa0579389b7a9f483877745fb06c/monero_utils/MyMoneroCoreBridge.js#L465) - note `err_code` handling in `step1` and comments
+* [JS implementation of SendFunds](https://github.com/mycoinevo/mycoinevo-core-js/blob/master/coinevo_utils/coinevo_sendingFunds_utils.js#L100)
+* [JS implementation of JSON bridge calls](https://github.com/mycoinevo/mycoinevo-core-js/blob/789c1fa71b00fa0579389b7a9f483877745fb06c/coinevo_utils/MyCoinevoCoreBridge.js#L465) - note `err_code` handling in `step1` and comments
 
 ##### Shared JSON types
 
@@ -309,7 +309,7 @@ The values which must be passed between functions have (almost entirely) consist
 	* `index: UInt64String`
 	* `tx_pub_key: String`
 
-* `CreateTransactionErrorCode: UInt32String` defined in `monero_transfer_utils.hpp`; to remain stable within major versions
+* `CreateTransactionErrorCode: UInt32String` defined in `coinevo_transfer_utils.hpp`; to remain stable within major versions
 
 ##### `send_step1__prepare_params_for_get_decoys`
 
