@@ -1,1 +1,4 @@
 
+[submodule "contrib/coinevo-core-custom"]
+	path = contrib/coinevo-core-custom
+	url = https://github.com/coinevo/coinevo-core-custom
